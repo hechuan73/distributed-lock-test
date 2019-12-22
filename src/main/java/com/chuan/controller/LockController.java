@@ -52,12 +52,17 @@ public class LockController {
             }
 
             while (ticketCount > 0) {
-                redisLock.lock();
-                if (ticketCount > 0) {
-                    ticketCount--;
-                    amount++;
+                try {
+                    redisLock.lock();
+                    if (ticketCount > 0) {
+                        ticketCount--;
+                        amount++;
+                    }
+                } catch (Exception e){
+                    e.printStackTrace();
+                } finally {
+                    redisLock.unlock();
                 }
-                redisLock.unlock();
             }
 
             System.out.println(Thread.currentThread().getName() + " sold " + amount + " tickets!");
